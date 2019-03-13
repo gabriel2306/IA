@@ -2,6 +2,4 @@ En este repositorio vamos a almacenar nuestro desarrollo de la práctica de labor
 asignatura de 3º de Ingeniería Informática.
 
 Participantes:
-López Cuenca, Gabriel
-Sanz Sacristán, Sergio
-Zamorano Ortega, Álvaro
+López Cuenca, Gabriel - Sanz Sacristán, Sergio - Zamorano Ortega, Álvaro

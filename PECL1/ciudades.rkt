@@ -33,11 +33,11 @@
   (list-ref lista (- indice 1))
 )
 
-(define (e_explorar lista)
+(define (ultimo-lista lista)
   (elemento_l lista (length lista)))
 
 (define (sucesores lista)
-  (crear_camino lista (sucesores_aux (elemento_l matriz_ciudades (e_explorar lista)) 1))
+  (crear_camino lista (sucesores_aux (elemento_l matriz_ciudades (ultimo-lista lista)) 1))
 )
 
 (define (crear_camino lista_original lista_sucesores)
@@ -49,18 +49,15 @@
 (define (poner-final x l)
   (reverse (cons x (reverse l))))
 
-(define (es-meta lista)
-  (equal? (elemento_l lista (length lista)) meta))
-
 (define (busqueda-en-profundidad abiertos cerrados)
   (when (not (empty? abiertos))
     (let ([actual (car abiertos)])
       (cond
-        [(equal? actual meta) actual]
-        [(member actual cerrados) (busqueda-en-profundidad (cdr abiertos) cerrados)]
+        [(equal? (ultimo-lista actual) meta) actual]
+        [(member (ultimo-lista actual) cerrados) (busqueda-en-profundidad (cdr abiertos) cerrados)]
         [else (busqueda-en-profundidad
                    (append (sucesores actual) (cdr abiertos))
-                   (cons actual cerrados)
+                   (cons (ultimo-lista actual) cerrados)
                )
          ]
       )
@@ -72,11 +69,11 @@
   (when (not (empty? abiertos))
     (let ([actual (car abiertos)])
       (cond
-        [(es-meta actual) actual]
-        [(member actual cerrados) (busqueda-en-anchura (cdr abiertos) cerrados)]
+        [(equal? (ultimo-lista actual) meta) actual]
+        [(member (ultimo-lista actual) cerrados) (busqueda-en-anchura (cdr abiertos) cerrados)]
         [else (busqueda-en-anchura
                    (append (cdr abiertos) (sucesores actual))
-                   (cons actual cerrados)
+                   (cons (ultimo-lista actual) cerrados)
                )
          ]
       )

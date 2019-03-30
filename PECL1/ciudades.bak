@@ -9,9 +9,9 @@
 
 (define matriz_ciudades (list c1 c2 c3 c4 c5))
 
-(define inicial 1)
+(define inicial c1)
 
-(define meta 5)
+(define meta c5)
 
 (define (sucesores_aux ciudad cont)
   (cond
@@ -35,21 +35,5 @@
 
 (define (sucesores ciudad)
   (sucesores_aux (elemento_lista matriz_ciudades ciudad) 1)
-)
-
-(define (busqueda-en-profundidad abiertos cerrados)
-  (when (not (empty? abiertos))
-    (let ([actual (car abiertos)])
-      (cond
-        [(equal? actual meta) actual]
-        [(member actual cerrados) (busqueda-en-profundidad (cdr abiertos) cerrados)]
-        [else (busqueda-en-profundidad
-                   (append (sucesores actual) (cdr abiertos))
-                   (cons actual cerrados)
-               )
-         ]
-      )
-    )
-  )
 )
 

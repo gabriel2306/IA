@@ -21,8 +21,6 @@
   )
 )
 
-;(elemento_lista matriz_ciudades cont)
-
 (define (to_string contador)
   (let ([str (format "~v" contador)])
     (string-append "c" str)
@@ -49,7 +47,7 @@
 (define (poner-final x l)
   (reverse (cons x (reverse l))))
 
-(define (busqueda-en-profundidad abiertos cerrados)
+(define (busqueda_p abiertos cerrados)
   (when (not (empty? abiertos))
     (let ([actual (car abiertos)])
       (cond
@@ -65,7 +63,7 @@
   )
 )
 
-(define (busqueda-en-anchura abiertos cerrados)
+(define (busqueda_a abiertos cerrados)
   (when (not (empty? abiertos))
     (let ([actual (car abiertos)])
       (cond

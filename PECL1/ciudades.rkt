@@ -73,16 +73,58 @@
                    (append (cdr abiertos) (sucesores actual matriz_ciudades))
                    (cons (ultimo-lista actual) cerrados) meta matriz_ciudades)]))))
 
+;Busqueda OPTIMAL
+(define (busqueda_o abiertos cerrados meta matriz_ciudades)
+  (when (not (empty? abiertos))
+    (let ([actual (car abiertos)])
+      (cond
+        [(equal? (ultimo-lista actual) meta) actual]
+        [(member (ultimo-lista actual) cerrados) (busqueda_o (ordenar (cdr abiertos) matriz_ciudades) cerrados meta matriz_ciudades)]
+        [else (busqueda_o
+                   (ordenar (append (cdr abiertos) (sucesores actual matriz_ciudades)) matriz_ciudades)
+                   (cons (ultimo-lista actual) cerrados) meta matriz_ciudades)]))))
+
 ;Te da el coste del camino introducido.
 (define (coste-camino camino matriz_ciudades)
   (cond
     [(= (length camino) 1) 0]
-    [else (+ (elemento_l (elemento_l matriz_ciudades (elemento_l camino 1)) (elemento_l camino 2))(coste-camino (cdr camino)))]))
+    [else (+ (elemento_l (elemento_l matriz_ciudades (elemento_l camino 1)) (elemento_l camino 2))(coste-camino (cdr camino) matriz_ciudades))]))
+
+(define (menor lista matriz_ciudades)
+  (cond
+    [(empty? lista) empty]
+    [(empty? (cdr lista)) (car lista)]
+    [(< (coste-camino (car lista) matriz_ciudades) (coste-camino (car (cdr lista)) matriz_ciudades)) (menor (cons (car lista) (cddr lista)) matriz_ciudades)]
+    [else (menor (cdr lista) matriz_ciudades)]
+  )
+)
+
+(define (eliminar n lista)
+  (cond
+    [(empty? lista) empty]
+    [(equal? n (car lista)) (cdr lista)]
+    [else (cons (car lista) (eliminar n (cdr lista)))]
+  )
+)
+
+(define (ordenar lista matriz_ciudades)
+  (cond
+    [(empty? lista) empty]
+    [else (cons (menor lista matriz_ciudades) (ordenar (eliminar (menor lista matriz_ciudades) lista) matriz_ciudades))]
+  )
+)
 
 (define (busqueda lista_ciudades tipo inicial meta)
   (cond
     [(= tipo 1) (busqueda_a (list(list inicial)) empty meta lista_ciudades)]
-    [else (busqueda_p (list(list inicial)) empty meta lista_ciudades)]))
+    [(= tipo 2) (busqueda_p (list(list inicial)) empty meta lista_ciudades)]
+    [else (busqueda_o (list(list inicial)) empty meta lista_ciudades)]))
+
+
+(define (dar_bienvenida)
+  (display "BIENVENIDO A LA BUSQUEDA EN GRAFOS\nIntroduzca lista de listas/Tipo de busqueda(Anchura -> 1, Profundidad -> 2, Optimal -> 3)/Estado inicial/Estado meta\n"))
+
+(dar_bienvenida)
 
 ;(busqueda (list '(0 1 1 0 0) '(1 0 0 1 1) '(1 0 0 1 0) '(0 1 1 0 1) '(0 1 0 1 0)) 1 1 5)
 

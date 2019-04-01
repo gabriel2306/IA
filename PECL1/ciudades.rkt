@@ -1,6 +1,8 @@
 ;; The first three lines of this file were inserted by DrRacket. They record metadata
 ;; about the language level of this file in a form that our tools can easily process.
 #reader(lib "htdp-advanced-reader.ss" "lang")((modname ciudades) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #t #t none #f () #f)))
+
+
 ;Matriz de conexion entre ciudades
 (define c1 '(0 1 1 0 0))
 (define c2 '(1 0 0 1 1))
@@ -76,3 +78,4 @@
   (cond
     [(= (length camino) 1) 0]
     [else (+ (elemento_l (elemento_l matriz_ciudades (elemento_l camino 1)) (elemento_l camino 2))(coste-camino (cdr camino)))]))
+

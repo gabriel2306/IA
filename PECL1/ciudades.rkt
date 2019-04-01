@@ -1,18 +1,21 @@
 ;; The first three lines of this file were inserted by DrRacket. They record metadata
 ;; about the language level of this file in a form that our tools can easily process.
 #reader(lib "htdp-advanced-reader.ss" "lang")((modname ciudades) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #t #t none #f () #f)))
+;Matriz de conexion entre ciudades
 (define c1 '(0 1 1 0 0))
 (define c2 '(1 0 0 1 1))
 (define c3 '(1 0 0 1 0))
 (define c4 '(0 1 1 0 1))
 (define c5 '(0 1 0 1 0))
 
+;Hace una lista con todas las ciudades
 (define matriz_ciudades (list c1 c2 c3 c4 c5))
 
 (define inicial 1)
 
 (define meta 5)
 
+;Introduces ciudad como lista (cont te dice a que ciudades hay conexiones) como una lista
 (define (sucesores_aux ciudad cont)
   (cond
     [(null? ciudad) '()]
@@ -24,23 +27,29 @@
     (string-append "c" str)
   ))
 
+;te devuelve un elemento de posicion indice de una lista
 (define (elemento_l lista indice)
   (list-ref lista (- indice 1)))
 
+;devuelve el ultimo elemento de la lista
 (define (ultimo-lista lista)
   (elemento_l lista (length lista)))
 
+;te devuelve los sucesores dado un camino, lo completa. En una lista de listas
 (define (sucesores lista)
   (crear_camino lista (sucesores_aux (elemento_l matriz_ciudades (ultimo-lista lista)) 1)))
 
+;Te hace la lista con los distintos caminos para llegar a los sucesores
 (define (crear_camino lista_original lista_sucesores)
   (cond
     [(null? lista_sucesores) '()]
     [else (cons (poner-final (car lista_sucesores) lista_original) (crear_camino lista_original (cdr lista_sucesores)))]))
 
+;Introducir por el final
 (define (poner-final x l)
   (reverse (cons x (reverse l))))
 
+;Busqueda en PROFUNDIDAD
 (define (busqueda_p abiertos cerrados)
   (when (not (empty? abiertos))
     (let ([actual (car abiertos)])
@@ -51,6 +60,7 @@
                    (append (sucesores actual) (cdr abiertos))
                    (cons (ultimo-lista actual) cerrados))]))))
 
+;Busqueda en ANCHURA
 (define (busqueda_a abiertos cerrados)
   (when (not (empty? abiertos))
     (let ([actual (car abiertos)])
@@ -61,6 +71,7 @@
                    (append (cdr abiertos) (sucesores actual))
                    (cons (ultimo-lista actual) cerrados))]))))
 
+;Te da el coste del camino introducido.
 (define (coste-camino camino)
   (cond
     [(= (length camino) 1) 0]

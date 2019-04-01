@@ -128,13 +128,13 @@
 
 ;Funcion que inicia la ejecucion
 (define (busqueda lista_ciudades tipo inicial meta)
-  (cond
-    [(= tipo 1) (busqueda_a (list(list inicial)) empty meta lista_ciudades)]
-    [(= tipo 2) (busqueda_p (list(list inicial)) empty meta lista_ciudades)]
-    [(= tipo 3) (busqueda_o (list(list inicial)) empty meta lista_ciudades)]
-    [(= tipo 4) (busqueda_ap (list(list inicial)) empty meta lista_ciudades)]
-    [else (display "Metodo de busqueda no valido\n")]))
-
+  (if (> meta (length lista_ciudades)) (display "  *Meta no valida*\n\n")
+      (cond
+        [(= tipo 1) (busqueda_a (list(list inicial)) empty meta lista_ciudades)]
+        [(= tipo 2) (busqueda_p (list(list inicial)) empty meta lista_ciudades)]
+        [(= tipo 3) (busqueda_o (list(list inicial)) empty meta lista_ciudades)]
+        [(= tipo 4) (busqueda_ap (list(list inicial)) empty meta lista_ciudades)]
+        [else (display "Metodo de busqueda no valido\n")])))
 
 ;Funcion para mostrar instrucciones de ejecucion
 (define (dar_bienvenida)

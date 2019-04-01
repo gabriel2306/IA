@@ -1,8 +1,6 @@
 ;; The first three lines of this file were inserted by DrRacket. They record metadata
 ;; about the language level of this file in a form that our tools can easily process.
 #reader(lib "htdp-advanced-reader.ss" "lang")((modname ciudades) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #t #t none #f () #f)))
-
-
 ;Matriz de conexion entre ciudades
 (define c1 '(0 1 1 0 0))
 (define c2 '(1 0 0 1 1))
@@ -84,6 +82,17 @@
                    (ordenar (append (cdr abiertos) (sucesores actual matriz_ciudades)) matriz_ciudades)
                    (cons (ultimo-lista actual) cerrados) meta matriz_ciudades)]))))
 
+;Busqueda A*
+(define (busqueda_ap abiertos cerrados meta matriz_ciudades)
+  (when (not (empty? abiertos))
+    (let ([actual (car abiertos)])
+      (cond
+        [(equal? (ultimo-lista actual) meta) actual]
+        [(member (ultimo-lista actual) cerrados) (busqueda_ap (ordenar_h (cdr abiertos) matriz_ciudades meta) cerrados meta matriz_ciudades)]
+        [else (busqueda_ap
+                   (ordenar_h (append (cdr abiertos) (sucesores actual matriz_ciudades)) matriz_ciudades meta)
+                   (cons (ultimo-lista actual) cerrados) meta matriz_ciudades)]))))
+
 ;Te da el coste del camino introducido.
 (define (coste-camino camino matriz_ciudades)
   (cond
@@ -95,37 +104,50 @@
     [(empty? lista) empty]
     [(empty? (cdr lista)) (car lista)]
     [(< (coste-camino (car lista) matriz_ciudades) (coste-camino (car (cdr lista)) matriz_ciudades)) (menor (cons (car lista) (cddr lista)) matriz_ciudades)]
-    [else (menor (cdr lista) matriz_ciudades)]
-  )
-)
+    [else (menor (cdr lista) matriz_ciudades)]))
 
 (define (eliminar n lista)
   (cond
     [(empty? lista) empty]
     [(equal? n (car lista)) (cdr lista)]
-    [else (cons (car lista) (eliminar n (cdr lista)))]
-  )
-)
+    [else (cons (car lista) (eliminar n (cdr lista)))]))
 
 (define (ordenar lista matriz_ciudades)
   (cond
     [(empty? lista) empty]
-    [else (cons (menor lista matriz_ciudades) (ordenar (eliminar (menor lista matriz_ciudades) lista) matriz_ciudades))]
-  )
-)
+    [else (cons (menor lista matriz_ciudades) (ordenar (eliminar (menor lista matriz_ciudades) lista) matriz_ciudades))]))
+
+(define (valor-heuristico camino meta)
+  (cond
+    [(equal? (ultimo-lista camino) meta) 0]
+    [else (- meta (ultimo-lista camino))]))
+
+(define (menor_h lista matriz_ciudades meta)
+  (cond
+    [(empty? lista) empty]
+    [(empty? (cdr lista)) (car lista)]
+    [(< (+ (coste-camino (car lista) matriz_ciudades) (valor-heuristico (car lista) meta))
+        (+ (coste-camino (car (cdr lista)) matriz_ciudades) (valor-heuristico (car (cdr lista)) meta))) (menor_h (cons (car lista) (cddr lista)) matriz_ciudades meta)]
+    [else (menor (cdr lista) matriz_ciudades)]))
+
+(define (ordenar_h lista matriz_ciudades meta)
+  (cond
+    [(empty? lista) empty]
+    [else (cons (menor_h lista matriz_ciudades meta) (ordenar_h (eliminar (menor_h lista matriz_ciudades meta) lista) matriz_ciudades meta))]))
+
 
 (define (busqueda lista_ciudades tipo inicial meta)
   (cond
     [(= tipo 1) (busqueda_a (list(list inicial)) empty meta lista_ciudades)]
     [(= tipo 2) (busqueda_p (list(list inicial)) empty meta lista_ciudades)]
-    [else (busqueda_o (list(list inicial)) empty meta lista_ciudades)]))
+    [(= tipo 3) (busqueda_o (list(list inicial)) empty meta lista_ciudades)]
+    [(= tipo 4) (busqueda_ap (list(list inicial)) empty meta lista_ciudades)]
+    [else (display "Metodo de busqueda no valido\n")]))
 
 
 (define (dar_bienvenida)
-  (display "BIENVENIDO A LA BUSQUEDA EN GRAFOS\nIntroduzca lista de listas/Tipo de busqueda(Anchura -> 1, Profundidad -> 2, Optimal -> 3)/Estado inicial/Estado meta\n"))
+  (display "BIENVENIDO A LA BUSQUEDA EN GRAFOS\nIntroduzca lista de listas/Tipo de busqueda(Anchura -> 1, Profundidad -> 2, Optimal -> 3, A* -> 4)/Estado inicial/Estado meta\n"))
 
 (dar_bienvenida)
 
 ;(busqueda (list '(0 1 1 0 0) '(1 0 0 1 1) '(1 0 0 1 0) '(0 1 1 0 1) '(0 1 0 1 0)) 1 1 5)
-
-

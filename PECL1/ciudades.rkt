@@ -138,7 +138,7 @@
 
 ;Funcion para mostrar instrucciones de ejecucion
 (define (dar_bienvenida)
-  (display "\nBIENVENIDO A LA BUSQUEDA DE RUTAS\n ->Introduzca:\n  (busqueda *matriz conexiones* *Tipo de busqueda(Anchura -> 1, Profundidad -> 2, Optimal -> 3, A* -> 4)* *Estado inicial* *Estado meta*)\n\n"))
+  (display "\nBIENVENIDO A LA BUSQUEDA DE RUTAS\n ->Introduzca:\n  (busqueda *Matriz de conexiones* *Tipo de busqueda(Anchura -> 1, Profundidad -> 2, Optimal -> 3, A* -> 4)* *Estado inicial* *Estado meta*)\n\n"))
 
 ;Ejecucion de dar_bienvenida al hacer Run
 (dar_bienvenida)

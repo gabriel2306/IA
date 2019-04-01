@@ -11,11 +11,11 @@
 (define c5 '(0 1 0 1 0))
 
 ;Hace una lista con todas las ciudades
-(define matriz_ciudades (list c1 c2 c3 c4 c5))
+;(define matriz_ciudades (list c1 c2 c3 c4 c5))
 
-(define inicial 1)
+;(define inicial 1)
 
-(define meta 5)
+;(define meta 5)
 
 ;Introduces ciudad como lista (cont te dice a que ciudades hay conexiones) como una lista
 (define (sucesores_aux ciudad cont)
@@ -38,7 +38,7 @@
   (elemento_l lista (length lista)))
 
 ;te devuelve los sucesores dado un camino, lo completa. En una lista de listas
-(define (sucesores lista)
+(define (sucesores lista matriz_ciudades)
   (crear_camino lista (sucesores_aux (elemento_l matriz_ciudades (ultimo-lista lista)) 1)))
 
 ;Te hace la lista con los distintos caminos para llegar a los sucesores
@@ -52,30 +52,38 @@
   (reverse (cons x (reverse l))))
 
 ;Busqueda en PROFUNDIDAD
-(define (busqueda_p abiertos cerrados)
+(define (busqueda_p abiertos cerrados meta matriz_ciudades)
   (when (not (empty? abiertos))
     (let ([actual (car abiertos)])
       (cond
         [(equal? (ultimo-lista actual) meta) actual]
-        [(member (ultimo-lista actual) cerrados) (busqueda_p (cdr abiertos) cerrados)]
+        [(member (ultimo-lista actual) cerrados) (busqueda_p (cdr abiertos) cerrados meta matriz_ciudades)]
         [else (busqueda_p
-                   (append (sucesores actual) (cdr abiertos))
-                   (cons (ultimo-lista actual) cerrados))]))))
+                   (append (sucesores actual matriz_ciudades) (cdr abiertos))
+                   (cons (ultimo-lista actual) cerrados) meta matriz_ciudades)]))))
 
 ;Busqueda en ANCHURA
-(define (busqueda_a abiertos cerrados)
+(define (busqueda_a abiertos cerrados meta matriz_ciudades)
   (when (not (empty? abiertos))
     (let ([actual (car abiertos)])
       (cond
         [(equal? (ultimo-lista actual) meta) actual]
-        [(member (ultimo-lista actual) cerrados) (busqueda_a (cdr abiertos) cerrados)]
+        [(member (ultimo-lista actual) cerrados) (busqueda_a (cdr abiertos) cerrados meta matriz_ciudades)]
         [else (busqueda_a
-                   (append (cdr abiertos) (sucesores actual))
-                   (cons (ultimo-lista actual) cerrados))]))))
+                   (append (cdr abiertos) (sucesores actual matriz_ciudades))
+                   (cons (ultimo-lista actual) cerrados) meta matriz_ciudades)]))))
 
 ;Te da el coste del camino introducido.
-(define (coste-camino camino)
+(define (coste-camino camino matriz_ciudades)
   (cond
     [(= (length camino) 1) 0]
     [else (+ (elemento_l (elemento_l matriz_ciudades (elemento_l camino 1)) (elemento_l camino 2))(coste-camino (cdr camino)))]))
+
+(define (busqueda lista_ciudades tipo inicial meta)
+  (cond
+    [(= tipo 1) (busqueda_a (list(list inicial)) empty meta lista_ciudades)]
+    [else (busqueda_p (list(list inicial)) empty meta lista_ciudades)]))
+
+;(busqueda (list '(0 1 1 0 0) '(1 0 0 1 1) '(1 0 0 1 0) '(0 1 1 0 1) '(0 1 0 1 0)) 1 1 5)
+
 

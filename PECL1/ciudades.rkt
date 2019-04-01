@@ -1,7 +1,7 @@
 ;; The first three lines of this file were inserted by DrRacket. They record metadata
 ;; about the language level of this file in a form that our tools can easily process.
 #reader(lib "htdp-advanced-reader.ss" "lang")((modname ciudades) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #t #t none #f () #f)))
-;BUSQUEDA EN GRAFO DE CIUDADES
+;BUSQUEDA EN GRAFO DE RUTAS
 ;Lopez Cuenca, Gabriel
 ;Sanz Sacristan, Sergio
 ;Zamorano Ortega, Alvaro
@@ -42,6 +42,19 @@
     [(equal? n (car lista)) (cdr lista)]
     [else (cons (car lista) (eliminar n (cdr lista)))]))
 
+;Funcion para mostrar el camino final junto con su coste
+(define (to-string camino)
+  (cond
+    [(= (length camino) 2) (string-append (string-append (number->string (elemento_l camino 1)) " -> ")
+                           (string-append "Coste: " (number->string (elemento_l camino 2))))]
+    [else (string-append (string-append (number->string (car camino)) " ") (to-string (cdr camino)))]))
+
+;Funcion para añadir al final del camino su coste
+(define (camino-final camino matriz_ciudades)
+  (cond
+    [(empty? camino) '()]
+    [else (poner-final (coste-camino camino matriz_ciudades) camino)]))
+
 ;Busqueda en PROFUNDIDAD ---------------------------------
 (define (busqueda_p abiertos cerrados meta matriz_ciudades)
   (when (not (empty? abiertos))
@@ -77,12 +90,13 @@
                    (ordenar (append (cdr abiertos) (sucesores actual matriz_ciudades)) matriz_ciudades)
                    (cons (ultimo-lista actual) cerrados) meta matriz_ciudades)]))))
 
-;Devuelve el coste del camino introducido
+;Funcion para obtener el coste del camino
 (define (coste-camino camino matriz_ciudades)
   (cond
     [(= (length camino) 1) 0]
     [else (+ (elemento_l (elemento_l matriz_ciudades (elemento_l camino 1)) (elemento_l camino 2))(coste-camino (cdr camino) matriz_ciudades))]))
 
+;Funcion para obtener el menor coste de la lista teniendo en cuenta los caminos
 (define (menor lista matriz_ciudades)
   (cond
     [(empty? lista) empty]
@@ -90,6 +104,7 @@
     [(< (coste-camino (car lista) matriz_ciudades) (coste-camino (car (cdr lista)) matriz_ciudades)) (menor (cons (car lista) (cddr lista)) matriz_ciudades)]
     [else (menor (cdr lista) matriz_ciudades)]))
 
+;Funcion para ordenar la lista
 (define (ordenar lista matriz_ciudades)
   (cond
     [(empty? lista) empty]
@@ -107,11 +122,14 @@
                    (ordenar_h (append (cdr abiertos) (sucesores actual matriz_ciudades)) matriz_ciudades meta)
                    (cons (ultimo-lista actual) cerrados) meta matriz_ciudades)]))))
 
+;Funcion para obtener el valor heuristico de un camino
+;Devuelve la diferencia entre meta y nodo (5-3=2)
 (define (valor-heuristico camino meta)
   (cond
     [(equal? (ultimo-lista camino) meta) 0]
     [else (- meta (ultimo-lista camino))]))
 
+;Funcion para obtener el menor coste de la lista teniendo en cuenta la heuristica
 (define (menor_h lista matriz_ciudades meta)
   (cond
     [(empty? lista) empty]
@@ -120,20 +138,25 @@
         (+ (coste-camino (car (cdr lista)) matriz_ciudades) (valor-heuristico (car (cdr lista)) meta))) (menor_h (cons (car lista) (cddr lista)) matriz_ciudades meta)]
     [else (menor (cdr lista) matriz_ciudades)]))
 
+;Funcion para ordenar la lista
 (define (ordenar_h lista matriz_ciudades meta)
   (cond
     [(empty? lista) empty]
     [else (cons (menor_h lista matriz_ciudades meta) (ordenar_h (eliminar (menor_h lista matriz_ciudades meta) lista) matriz_ciudades meta))]))
 ;-----------------------------------------------------------
 
-;Funcion que inicia la ejecucion
+;Funcion para iniciar la ejecucion
 (define (busqueda lista_ciudades tipo inicial meta)
   (if (> meta (length lista_ciudades)) (display "  *Meta no valida*\n\n")
       (cond
-        [(= tipo 1) (busqueda_a (list(list inicial)) empty meta lista_ciudades)]
-        [(= tipo 2) (busqueda_p (list(list inicial)) empty meta lista_ciudades)]
-        [(= tipo 3) (busqueda_o (list(list inicial)) empty meta lista_ciudades)]
-        [(= tipo 4) (busqueda_ap (list(list inicial)) empty meta lista_ciudades)]
+        [(= tipo 1) (display (string-append "  ** Camino: "
+                    (string-append (to-string (camino-final (busqueda_a (list(list inicial)) empty meta lista_ciudades) lista_ciudades)) " **\n\n")))]
+        [(= tipo 2) (display (string-append "  ** Camino: "
+                    (string-append (to-string (camino-final (busqueda_p (list(list inicial)) empty meta lista_ciudades) lista_ciudades)) " **\n\n")))]
+        [(= tipo 3) (display (string-append "  ** Camino: "
+                    (string-append (to-string (camino-final (busqueda_o (list(list inicial)) empty meta lista_ciudades) lista_ciudades)) " **\n\n")))]
+        [(= tipo 4) (display (string-append "  ** Camino: "
+                    (string-append (to-string (camino-final (busqueda_ap (list(list inicial)) empty meta lista_ciudades) lista_ciudades)) " **\n\n")))]
         [else (display "Metodo de busqueda no valido\n")])))
 
 ;Funcion para mostrar instrucciones de ejecucion

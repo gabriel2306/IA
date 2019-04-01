@@ -1,6 +1,11 @@
 ;; The first three lines of this file were inserted by DrRacket. They record metadata
 ;; about the language level of this file in a form that our tools can easily process.
 #reader(lib "htdp-advanced-reader.ss" "lang")((modname ciudades) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #t #t none #f () #f)))
+;BUSQUEDA EN GRAFO DE CIUDADES
+;Lopez Cuenca, Gabriel
+;Sanz Sacristan, Sergio
+;Zamorano Ortega, Alvaro
+
 ;Introducir ciudad como lista de costes a las adyacentes, devuelve una lista con el numero de las adyacentes
 (define (sucesores_aux ciudad cont)
   (cond

@@ -17,32 +17,26 @@
   (cond
     [(null? ciudad) '()]
     [(>= (car ciudad) 1) (cons cont (sucesores_aux (cdr ciudad) (+ cont 1)))]
-    [else (sucesores_aux (cdr ciudad) (+ cont 1))]
-  )
-)
+    [else (sucesores_aux (cdr ciudad) (+ cont 1))]))
 
 (define (to_string contador)
   (let ([str (format "~v" contador)])
     (string-append "c" str)
-  )
-)
+  ))
 
 (define (elemento_l lista indice)
-  (list-ref lista (- indice 1))
-)
+  (list-ref lista (- indice 1)))
 
 (define (ultimo-lista lista)
   (elemento_l lista (length lista)))
 
 (define (sucesores lista)
-  (crear_camino lista (sucesores_aux (elemento_l matriz_ciudades (ultimo-lista lista)) 1))
-)
+  (crear_camino lista (sucesores_aux (elemento_l matriz_ciudades (ultimo-lista lista)) 1)))
 
 (define (crear_camino lista_original lista_sucesores)
   (cond
     [(null? lista_sucesores) '()]
-    [else (cons (poner-final (car lista_sucesores) lista_original) (crear_camino lista_original (cdr lista_sucesores)))])
- )
+    [else (cons (poner-final (car lista_sucesores) lista_original) (crear_camino lista_original (cdr lista_sucesores)))]))
 
 (define (poner-final x l)
   (reverse (cons x (reverse l))))
@@ -55,13 +49,7 @@
         [(member (ultimo-lista actual) cerrados) (busqueda_p (cdr abiertos) cerrados)]
         [else (busqueda_p
                    (append (sucesores actual) (cdr abiertos))
-                   (cons (ultimo-lista actual) cerrados)
-               )
-         ]
-      )
-    )
-  )
-)
+                   (cons (ultimo-lista actual) cerrados))]))))
 
 (define (busqueda_a abiertos cerrados)
   (when (not (empty? abiertos))
@@ -71,11 +59,9 @@
         [(member (ultimo-lista actual) cerrados) (busqueda_a (cdr abiertos) cerrados)]
         [else (busqueda_a
                    (append (cdr abiertos) (sucesores actual))
-                   (cons (ultimo-lista actual) cerrados)
-               )
-         ]
-      )
-    )
-  )
-)
+                   (cons (ultimo-lista actual) cerrados))]))))
 
+(define (coste-camino camino)
+  (cond
+    [(= (length camino) 1) 0]
+    [else (+ (elemento_l (elemento_l matriz_ciudades (elemento_l camino 1)) (elemento_l camino 2))(coste-camino (cdr camino)))]))

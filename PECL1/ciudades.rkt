@@ -45,8 +45,7 @@
 ;Funcion para mostrar el camino final junto con su coste
 (define (to-string camino)
   (cond
-    [(= (length camino) 2) (string-append (string-append (number->string (elemento_l camino 1)) " -> ")
-                           (string-append "Coste: " (number->string (elemento_l camino 2))))]
+    [(= (length camino) 1) (string-append "-> " (string-append "Coste: " (number->string (car camino))))]
     [else (string-append (string-append (number->string (car camino)) " ") (to-string (cdr camino)))]))
 
 ;Funcion para añadir al final del camino su coste

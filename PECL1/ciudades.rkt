@@ -52,8 +52,8 @@
     (let ([actual (car abiertos)])
       (cond
         [(equal? (ultimo-lista actual) meta) actual]
-        [(member (ultimo-lista actual) cerrados) (busqueda-en-profundidad (cdr abiertos) cerrados)]
-        [else (busqueda-en-profundidad
+        [(member (ultimo-lista actual) cerrados) (busqueda_p (cdr abiertos) cerrados)]
+        [else (busqueda_p
                    (append (sucesores actual) (cdr abiertos))
                    (cons (ultimo-lista actual) cerrados)
                )
@@ -68,8 +68,8 @@
     (let ([actual (car abiertos)])
       (cond
         [(equal? (ultimo-lista actual) meta) actual]
-        [(member (ultimo-lista actual) cerrados) (busqueda-en-anchura (cdr abiertos) cerrados)]
-        [else (busqueda-en-anchura
+        [(member (ultimo-lista actual) cerrados) (busqueda_a (cdr abiertos) cerrados)]
+        [else (busqueda_a
                    (append (cdr abiertos) (sucesores actual))
                    (cons (ultimo-lista actual) cerrados)
                )

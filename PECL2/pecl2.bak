@@ -1,0 +1,4 @@
+#lang racket
+
+(define (prisma a b c) (list a b c))
+

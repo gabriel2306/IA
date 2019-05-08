@@ -101,3 +101,20 @@
 (define (listaCortesLargo prisma) (listaCortesLargo_aux prisma 1))
 
 (define (listaCortesLargo_aux prisma n) (if(< n (elemento_l prisma 3)) (cons (cortar_largo prisma n) (listaCortesLargo_aux prisma (+ n 1))) '() ))
+
+; Genera el total de jugadas permitidas de una rama.
+(define (listaJugadas prisma) (append (append (listaCortesAncho prisma) (listaCortesAlto prisma)) (listaCortesLargo prisma)))
+
+(define (juegaMaquina listaJugadas)
+  (if (= (length listaJugadas) 0) -1
+      (if (= (nodoMinMax (car listaJugadas) 0) 1) (car listaJugadas)
+          (juegaMaquina (cdr listaJugadas)))))
+
+;;Nivel 0-> Max
+(define (nodoMinMax nodo nivel)
+  (if (prisma_fin? nodo)
+      (if (= nivel 0) 1 0)
+      (if (= nivel 0)
+          (let ([listaJugadas (listaJugadas nodo)])
+          (llamarMax 0 listaJugadas)
+          (llamarMin 1 listaJugadas)))))

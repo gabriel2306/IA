@@ -77,9 +77,8 @@
   (if (prisma_fin? prisma)
       (if (= jugador 0) (display "HAS PERDIDO\nMORAIS TE VA A ATROPELLAR") (display "HAS GANADO CRACK MORAIS"))
       (if (= jugador 0) (partida (pedirJugada prisma) 1)
-          (partida '(1 1 1) 0))))
+          (partida (juegaMaquina prisma) 0))))
 
-(define (minimax prisma) (display prisma))
 ;Sorteamos que jugador juega primero
 (define (turno) (random 2))
 
@@ -105,16 +104,37 @@
 ; Genera el total de jugadas permitidas de una rama.
 (define (listaJugadas prisma) (append (append (listaCortesAncho prisma) (listaCortesAlto prisma)) (listaCortesLargo prisma)))
 
-(define (juegaMaquina listaJugadas)
+(define (juegaMaquina prisma)
+  (let ([jugadasPosibles (listaJugadas prisma)])
+    (let ([resultadoJuegaMaquina (juegaMaquina_aux jugadasPosibles)])
+      (if (list? resultadoJuegaMaquina)
+          (begin (display "Maquina juega con ")
+                 (display resultadoJuegaMaquina)
+                 resultadoJuegaMaquina)
+          (begin (display "Maquina juega con ")
+                 (display (car jugadasPosibles))
+          (car jugadasPosibles))))))
+      
+(define (juegaMaquina_aux listaJugadas)
   (if (= (length listaJugadas) 0) -1
-      (if (= (nodoMinMax (car listaJugadas) 0) 1) (car listaJugadas)
-          (juegaMaquina (cdr listaJugadas)))))
+      (if (= (nodoMinMax (car listaJugadas) 1) 1) (car listaJugadas)
+          (juegaMaquina_aux (cdr listaJugadas)))))
 
 ;;Nivel 0-> Max
 (define (nodoMinMax nodo nivel)
   (if (prisma_fin? nodo)
-      (if (= nivel 0) 1 0)
-      (if (= nivel 0)
-          (let ([listaJugadas (listaJugadas nodo)])
-          (llamarMax 0 listaJugadas)
-          (llamarMin 1 listaJugadas)))))
+      (if (= nivel 0) 0 1)
+      (let ([listaJugadas (listaJugadas nodo)])
+        (if (= nivel 0)
+            (llamarMax listaJugadas)
+            (llamarMin listaJugadas)))))
+
+(define (llamarMax listaJugadas)
+  (if (= (length listaJugadas) 0)
+      0
+      (max (max 0 (nodoMinMax (car listaJugadas) 1)) (llamarMax (cdr listaJugadas)))))
+
+(define (llamarMin listaJugadas)
+  (if (= (length listaJugadas) 0)
+      1
+      (min (min 1 (nodoMinMax (car listaJugadas) 0)) (llamarMin (cdr listaJugadas)))))

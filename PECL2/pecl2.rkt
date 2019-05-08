@@ -15,47 +15,50 @@
 (define (cortar_largo x y) (append (list (car x) (car (cdr x))) (list (- (elemento_l x 3) y))))
 
 ;;Resta Vertical
-(define (restaAncho prisma n) (if (or (>= n (elemento_l prisma 1)) (= n 0))
-                                 (begin(display "Movimiento anchura no posible\n") ; Si no es correcto notificamos y volvemos a pedir.
-                                                                    (jugarAncho prisma))
-                                 (cortar_ancho prisma n))) ; Si es movimiento correcto devolvemos la lista.
+(define (corteAnchura prisma n) (if (or (>= n (elemento_l prisma 1)) (= n 0))
+                                 (begin (display "\nMovimiento anchura no posible\n") (jugarAncho prisma))
+                                 (cortar_ancho prisma n)))
 
 (define (jugarAncho prisma) (if (> (elemento_l prisma 1) 1)
                                (begin
-                                   (display "\nElija un numero para el corte: ")
-                                   (restaAncho prisma (read))) ; Llamamos a resta Vertical con la eleccion.
-                               (display "No se puede hacer el corte")))
+                                   (display "\nElija un numero para el corte \n")
+                                   (corteAnchura prisma (read)))
+                               (begin
+                                 (display "No se puede hacer el corte")
+                                 (pedirJugada prisma))))
 
 ;;Resta Horizontal
-(define (restaAlto prisma n) (if (or (>= n (elemento_l prisma 2)) (= n 0))
-                                 (begin(display "Movimiento altura no posible\n") ; Si no es correcto notificamos y volvemos a pedir.
-                                                                    (jugarAlto prisma))
-                                 (cortar_alto prisma n))) ; Si es movimiento correcto devolvemos la lista.
+(define (corteAltura prisma n) (if (or (>= n (elemento_l prisma 2)) (= n 0))
+                                 (begin(display "Movimiento altura no posible\n") (jugarAlto prisma))
+                                 (cortar_alto prisma n)))
 
 (define (jugarAlto prisma) (if (> (elemento_l prisma 2) 1)
                                (begin
-                                   (display "\nElija un numero para el corte: ")
-                                   (restaAlto prisma (read))) ; Llamamos a resta Vertical con la eleccion.
-                               (display "No se puede hacer el corte")))
+                                   (display "\nElija un numero para el corte \n")
+                                   (corteAltura prisma (read)))
+                               (begin
+                                 (display "No se puede hacer el corte")
+                                 (pedirJugada prisma))))
 
 ;;Resta Profundidad
-(define (restaLargo prisma n) (if (or (>= n (elemento_l prisma 3)) (= n 0))
-                                 (begin(display "Movimiento altura no posible\n") ; Si no es correcto notificamos y volvemos a pedir.
-                                                                    (jugarLargo prisma))
-                                 (cortar_largo prisma n))) ; Si es movimiento correcto devolvemos la lista.
+(define (corteLongitud prisma n) (if (or (>= n (elemento_l prisma 3)) (= n 0))
+                                 (begin(display "Movimiento altura no posible\n") (jugarLargo prisma))
+                                 (cortar_largo prisma n)))
 
 (define (jugarLargo prisma) (if (> (elemento_l prisma 3) 1)
                                (begin
-                                   (display "\nElija un numero para el corte: ")
-                                   (restaLargo prisma (read))) ; Llamamos a resta Vertical con la eleccion.
-                               (display "No se puede hacer el corte")))
+                                   (display "\nElija un numero para el corte \n")
+                                   (corteLongitud prisma (read)))
+                               (begin
+                                 (display "No se puede hacer el corte")
+                                 (pedirJugada prisma))))
 
 ;;Seleccionar jugada
 (define (pedirJugada prisma)
   (begin
-    (display "Prisma actual:")
+    (display "\n*** Prisma actual ")
     (display prisma)
-    (display "\n")
+    (display " ***\n")
         (display "\nSeleccione [0/1/2]-[Ancho/Alto/Largo]\n"); Pregunta por jugada.
         (let ([direccion (read)])
           (cond
@@ -68,14 +71,14 @@
 ;;JUGAR
 (define (jugar) (begin(display "\nIntroduce las dimensiones del prisma\n")
                       (let([prism (prisma (read)(read)(read))])
-                      (if(= (turno) 0) (begin(display "Le toca empezar al jugador 1\n")
-                                               (partida prism 0)) ; Comienzo yo.
-                                         (begin(display "Le toca empezar a la maquina\n")
-                                               (partida prism 1)))))) ; Comienza la maquina.))
+                      (if(= (turno) 0) (begin(display "\n*** COMIENZA EL JUGADOR ***\n")
+                                               (partida prism 0))
+                                         (begin(display "\n*** COMIENZA LA MAQUINA ***\n")
+                                               (partida prism 1))))))
 
 (define (partida prisma jugador)
   (if (prisma_fin? prisma)
-      (if (= jugador 0) (display "HAS PERDIDO\nMORAIS TE VA A ATROPELLAR") (display "HAS GANADO CRACK MORAIS"))
+      (if (= jugador 0) (display "\n*** HAS PERDIDO ***\n") (display "\n*** HAS GANADO ***\n"))
       (if (= jugador 0) (partida (pedirJugada prisma) 1)
           (partida (juegaMaquina prisma) 0))))
 
@@ -105,15 +108,14 @@
 (define (listaJugadas prisma) (append (append (listaCortesAncho prisma) (listaCortesAlto prisma)) (listaCortesLargo prisma)))
 
 (define (juegaMaquina prisma)
-  (let ([jugadasPosibles (listaJugadas prisma)])
-    (let ([resultadoJuegaMaquina (juegaMaquina_aux jugadasPosibles)])
-      (if (list? resultadoJuegaMaquina)
-          (begin (display "Maquina juega con ")
-                 (display resultadoJuegaMaquina)
-                 resultadoJuegaMaquina)
-          (begin (display "Maquina juega con ")
-                 (display (car jugadasPosibles))
-          (car jugadasPosibles))))))
+  (begin (display "\n*** Maquina usa el prisma ")
+         (display prisma)
+         (display " ***\n")
+         (let ([jugadasPosibles (listaJugadas prisma)])
+           (let ([resultadoJuegaMaquina (juegaMaquina_aux jugadasPosibles)])
+             (if (list? resultadoJuegaMaquina)
+                 resultadoJuegaMaquina
+                 (car jugadasPosibles))))))
       
 (define (juegaMaquina_aux listaJugadas)
   (if (= (length listaJugadas) 0) -1
@@ -138,3 +140,6 @@
   (if (= (length listaJugadas) 0)
       1
       (min (min 1 (nodoMinMax (car listaJugadas) 0)) (llamarMin (cdr listaJugadas)))))
+
+(display "\nBIENVENIDO AL JUEGO\n")
+(jugar)

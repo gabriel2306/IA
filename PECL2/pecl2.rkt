@@ -66,10 +66,5 @@
                   (pedirJugada prisma))]))))
 
 ;;JUGAR
-(define (jugar) (begin(display "\nIntroduce el tamaño del prisma\n")
-                      (tamañoPrisma (read)
-                                    )
-                      )
-  )
-
-(define (tamañoPrisma n) )
+(define (jugar) (begin(display "\nIntroduce las dimensiones del prisma\n")
+                      (prisma (read)(read)(read))))

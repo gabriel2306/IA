@@ -67,4 +67,37 @@
 
 ;;JUGAR
 (define (jugar) (begin(display "\nIntroduce las dimensiones del prisma\n")
-                      (prisma (read)(read)(read))))
+                      (let([prism (prisma (read)(read)(read))])
+                      (if(= (turno) 0) (begin(display "Le toca empezar al jugador 1\n")
+                                               (partida prism 0)) ; Comienzo yo.
+                                         (begin(display "Le toca empezar a la maquina\n")
+                                               (partida prism 1)))))) ; Comienza la maquina.))
+
+(define (partida prisma jugador)
+  (if (prisma_fin? prisma)
+      (if (= jugador 0) (display "HAS PERDIDO\nMORAIS TE VA A ATROPELLAR") (display "HAS GANADO CRACK MORAIS"))
+      (if (= jugador 0) (partida (pedirJugada prisma) 1)
+          (partida '(1 1 1) 0))))
+
+(define (minimax prisma) (display prisma))
+;Sorteamos que jugador juega primero
+(define (turno) (random 2))
+
+; Funciones maximo y minimo
+(define (min n m) (if(>= m n) n m))
+(define (max n m) (if(>= m n) m n))
+
+; Genera las jugadas en Ancho.
+(define (listaCortesAncho prisma) (listaCortesAncho_aux prisma 1))
+
+(define (listaCortesAncho_aux prisma n) (if(< n (elemento_l prisma 1)) (cons (cortar_ancho prisma n) (listaCortesAncho_aux prisma (+ n 1))) '() ))
+
+; Genera las jugadas en Alto.
+(define (listaCortesAlto prisma) (listaCortesAlto_aux prisma 1))
+
+(define (listaCortesAlto_aux prisma n) (if(< n (elemento_l prisma 2)) (cons (cortar_alto prisma n) (listaCortesAlto_aux prisma (+ n 1))) '() ))
+
+; Genera las jugadas en Largo.
+(define (listaCortesLargo prisma) (listaCortesLargo_aux prisma 1))
+
+(define (listaCortesLargo_aux prisma n) (if(< n (elemento_l prisma 3)) (cons (cortar_largo prisma n) (listaCortesLargo_aux prisma (+ n 1))) '() ))

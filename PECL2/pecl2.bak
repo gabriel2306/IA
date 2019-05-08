@@ -2,3 +2,26 @@
 
 (define (prisma a b c) (list a b c))
 
+(define (prisma_fin x)
+  (if (empty? x) #t (if (= (car x) 1) (prisma_fin (cdr x)) #f)))
+
+(define (elemento_l lista indice)
+  (list-ref lista (- indice 1)))
+
+(define (cortar_ancho x y) (cons (- (elemento_l x 1) y) (cdr x)))
+
+(define (cortar_alto x y) (append (list (car x) (- (elemento_l x 2) y)) (cdr (cdr x))))
+
+(define (cortar_largo x y) (append (list (car x) (car (cdr x))) (list (- (elemento_l x 3) y))))
+
+;;Resta Vertical
+(define (restaAncho prisma n) (if (or (>= n (elemento_l prisma 1)) (= n 0))
+                                 (begin(printf "Movimiento vertical no posible\n") ; Si no es correcto notificamos y volvemos a pedir.
+                                                                    (jugarVertical prisma))
+                                 (cortar_ancho prisma n))) ; Si es movimiento correcto devolvemos la lista.
+
+(define (jugarVertical prisma) (if (> (elemento_l prisma 1) 1)
+                               (begin
+                                   (display "\nElija un numero de corte: ")
+                                   (restaAncho prisma (read))) ; Llamamos a resta Vertical con la eleccion.
+                               (display "No se puede hacer el corte"))) 

@@ -64,3 +64,12 @@
             [(= direccion 2) (jugarLargo prisma)]
             [else (begin(display "\nNo ha seleccionado una opcion correcta\n")
                   (pedirJugada prisma))]))))
+
+;;JUGAR
+(define (jugar) (begin(display "\nIntroduce el tamaño del prisma\n")
+                      (tamañoPrisma (read)
+                                    )
+                      )
+  )
+
+(define (tamañoPrisma n) )

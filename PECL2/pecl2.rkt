@@ -94,30 +94,6 @@
             (display "* Dimensiones del prisma inválidas *\n")
             (pedirPrisma))))))
 
-;;JUGAR
-(define (jugar)
-  (begin
-    (let([prism (pedirPrisma)])
-      (if(= (turno) 0)
-         (begin
-           (display "\n*** COMIENZA EL JUGADOR ***\n")
-           (partida prism 0))
-         (begin
-           (display "\n*** COMIENZA LA MAQUINA ***\n")
-           (partida prism 1))))))
-
-(define (partida prisma jugador)
-  (begin
-    (display "\n*** Prisma actual ")
-    (display prisma)
-    (display " ***\n")
-    (if (prisma_fin? prisma)
-      (if (= jugador 0) (display "\n*** HAS PERDIDO ***\n") (display "\n*** HAS GANADO ***\n"))
-      (if (= jugador 0) (partida (pedirJugada prisma) 1)
-          (begin
-            (display "\n*** Juega la maquina ***\n")
-            (partida (juegaMaquina prisma) 0))))))
-
 ;Sorteamos que jugador juega primero
 (define (turno) (generarRandom 2))
 
@@ -151,22 +127,47 @@
       (cons (cortar_largo prisma n) (listaCortesLargo_aux prisma (+ n 1)))
       '()))
 
-; Genera el total de jugadas permitidas de una rama.
+; Genera el total de jugadas permitidas desde un nodo
 (define (listaJugadas prisma)
   (append (append (listaCortesAncho prisma) (listaCortesAlto prisma)) (listaCortesLargo prisma)))
+
+;;JUGAR
+(define (jugar)
+  (begin
+    (let([prism (pedirPrisma)])
+      (if (= (turno) 0)
+         (begin
+           (display "\n*** COMIENZA EL JUGADOR ***\n")
+           (partida prism 0))
+         (begin
+           (display "\n*** COMIENZA LA MAQUINA ***\n")
+           (partida prism 1))))))
+
+(define (partida prisma jugador)
+  (begin
+    (display "\n*** Prisma actual ")
+    (display prisma)
+    (display " ***\n")
+    (if (prisma_fin? prisma)
+      (if (= jugador 0) (display "\n*** HAS PERDIDO ***\n") (display "\n*** HAS GANADO ***\n"))
+      (if (= jugador 0)
+          (partida (pedirJugada prisma) 1)
+          (partida (juegaMaquina prisma) 0)))))
 
 ;En caso de que no haya ninguna jugada para ganar, devolvemos una aleatoria de entre las posibles
 (define (juegaMaquina prisma)
   (begin
+    (display "\n*** Juega la maquina ***\n")
     (let ([jugadasPosibles (listaJugadas prisma)])
       (let ([resultadoJuegaMaquina (juegaMaquina_aux jugadasPosibles)])
-        (if (list? resultadoJuegaMaquina)
-            resultadoJuegaMaquina
-            (elemento_l jugadasPosibles (+ (generarRandom (length jugadasPosibles)) 1)))))))
+        (if (number? resultadoJuegaMaquina)
+            (elemento_l jugadasPosibles (+ (generarRandom (length jugadasPosibles)) 1))
+            resultadoJuegaMaquina)))))
       
 (define (juegaMaquina_aux listaJugadas)
   (if (= (length listaJugadas) 0) -1
-      (if (= (nodoMinMax (car listaJugadas) 1) 1) (car listaJugadas)
+      (if (= (nodoMinMax (car listaJugadas) 1) 1)
+          (car listaJugadas)
           (juegaMaquina_aux (cdr listaJugadas)))))
 
 ;;Nivel 0-> Max
@@ -187,6 +188,7 @@
   (if (= (length listaJugadas) 0)
       1
       (min (min 1 (nodoMinMax (car listaJugadas) 0)) (llamarMin (cdr listaJugadas)))))
+
 
 (define (juego)
   (begin

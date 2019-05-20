@@ -11,11 +11,11 @@
 (define (elemento_l lista indice)
   (list-ref lista (- indice 1)))
 
-(define (cortar_ancho x y) (cons (- (elemento_l x 1) y) (cdr x)))
+(define (cortar_ancho x y) (prisma (- (elemento_l x 1) y) (elemento_l x 2)(elemento_l x 3)))
 
-(define (cortar_alto x y) (append (list (car x) (- (elemento_l x 2) y)) (cdr (cdr x))))
+(define (cortar_alto x y) (prisma (elemento_l x 1) (- (elemento_l x 2) y) (elemento_l x 3)))
 
-(define (cortar_largo x y) (append (list (car x) (car (cdr x))) (list (- (elemento_l x 3) y))))
+(define (cortar_largo x y) (prisma (elemento_l x 1) (elemento_l x 2) (- (elemento_l x 3) y)))
 
 ;;Resta Vertical
 (define (corteAnchura prisma n)
@@ -197,4 +197,4 @@
     (jugar)))
 
 ;Ejecucion automatica del juego
-(juego)
+;;(juego)

@@ -131,6 +131,7 @@
   (append (append (listaCortesAncho prisma) (listaCortesAlto prisma)) (listaCortesLargo prisma)))
 
 ;;********** FUNCIONES PARA MINIMAX **********
+;Calcula la jugada ganadora del nodo o prisma raiz
 (define (juegaMaquina prisma)
   (begin
     (display "\n*** Juega la maquina ***\n")
@@ -139,31 +140,36 @@
         (if (number? resultadoJuegaMaquina)
             (elemento_l jugadasPosibles (+ (generarRandom (length jugadasPosibles)) 1)) ;Si no hay ganadora -> aleatoria entre posibles
             resultadoJuegaMaquina)))))
-      
+
+;Función auxiliar que calcula la jugada ganadora de entre uns lista de jugadas del nivel sucesorio al raíz
 (define (juegaMaquina_aux listaJugadas)
   (if (= (length listaJugadas) 0) -1
       (if (= (nodoMinMax (car listaJugadas) 1) 1)
           (car listaJugadas)
           (juegaMaquina_aux (cdr listaJugadas)))))
 
+;Devuelve un 1 o un 0 en función de si pasa un camino ganador de un nodo dado y su nivel (max-min) dentro del árbol
 ;;Nivel 0-> Max
+;;Nivel 1-> Min
 (define (nodoMinMax nodo nivel)
   (if (prisma_fin? nodo)
-      (if (= nivel 0) 0 1)
+      (if (= nivel 0) 0 1);;Si el prisma fin se encuentra en un nodo max, devuelve un 0 (pierde)
       (let ([listaJugadas (listaJugadas nodo)])
         (if (= nivel 0)
-            (llamarMax listaJugadas)
-            (llamarMin listaJugadas)))))
+            (calcNodoMax listaJugadas)
+            (calcNodoMin listaJugadas)))))
 
-(define (llamarMax listaJugadas)
+;Devuelve el máximo de los valores de una lista de jugadas posibles de un nodo max
+(define (calcNodoMax listaJugadas)
   (if (= (length listaJugadas) 0)
       0
-      (max (max 0 (nodoMinMax (car listaJugadas) 1)) (llamarMax (cdr listaJugadas)))))
+      (max (max 0 (nodoMinMax (car listaJugadas) 1)) (calcNodoMax (cdr listaJugadas)))))
 
-(define (llamarMin listaJugadas)
+;Devuelve el mínimo de los valores de una lista de jugadas posibles de un nodo min
+(define (calcNodoMin listaJugadas)
   (if (= (length listaJugadas) 0)
       1
-      (min (min 1 (nodoMinMax (car listaJugadas) 0)) (llamarMin (cdr listaJugadas)))))
+      (min (min 1 (nodoMinMax (car listaJugadas) 0)) (calcNodoMin (cdr listaJugadas)))))
 
 ;;********** FUNCIONES PARA JUGAR **********
 ; Generamos aleatorio para saber quien comienza con el juego
